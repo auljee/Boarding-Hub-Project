@@ -1,0 +1,326 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <title>Dashboard - BoardingHub</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <!-- Bootstrap & Font Awesome -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" defer></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800;900&display=swap" rel="stylesheet" />
+
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      margin: 0;
+      min-height: 100vh;
+      transition: background 0.4s ease;
+    }
+
+    html[data-bs-theme="light"] body {
+      background: linear-gradient(120deg, #f6d365, #fda085, #fbc2eb, #a6c1ee);
+      background-size: 400% 400%;
+      animation: gradient 20s ease infinite;
+    }
+
+    @keyframes gradient {
+      0%, 100% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+    }
+
+    html[data-bs-theme="dark"] body {
+      background: #121212;
+      color: #f1f1f1;
+    }
+
+    .wrapper {
+      display: flex;
+    }
+
+    .sidebar {
+      width: 250px;
+      background-color: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(8px);
+      box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+      padding: 30px 20px;
+      position: fixed;
+      height: 100vh;
+      z-index: 1000;
+      transition: transform 0.3s ease;
+      top: 0;
+      left: 0;
+    }
+
+    .sidebar.closed {
+      transform: translateX(-100%);
+    }
+
+    .sidebar .brand {
+      font-size: 1.55rem;
+     font-weight: 700;
+     color: #6c63ff;
+     margin-bottom: 40px;
+     display: flex;
+     align-items: center;
+     gap: 10px;
+     white-space: nowrap;
+     overflow: hidden;
+     text-overflow: ellipsis;
+     padding-right: 10px; 
+    }
+    .sidebar a {
+      display: block;
+      color: #333;
+      text-decoration: none;
+      padding: 10px 12px;
+      margin-bottom: 10px;
+      border-radius: 10px;
+      font-weight: 500;
+      transition: all 0.2s ease;
+    }
+
+    .sidebar a.active,
+    .sidebar a:hover {
+      background: #e4e8ff;
+      color: #6c63ff;
+    }
+
+    .darkmode-toggle {
+      margin-top: 20px;
+      background: #6c63ff;
+      color: white;
+      border: none;
+      padding: 10px;
+      width: 100%;
+      border-radius: 8px;
+    }
+
+    .main-content {
+      margin-left: 250px;
+      padding: 40px 30px;
+      transition: margin-left 0.3s ease;
+    }
+
+    .sidebar.closed ~ .main-content {
+      margin-left: 0;
+    }
+
+    .sidebar-toggle-btn {
+      position: fixed;
+      top: 20px;
+      left: 270px;
+      z-index: 1100;
+      background-color: #6c63ff;
+      color: white;
+      border: none;
+      padding: 10px 12px;
+      border-radius: 50%;
+      font-size: 1.2rem;
+      transition: left 0.3s ease;
+    }
+
+    .sidebar.closed + .sidebar-toggle-btn {
+      left: 20px;
+    }
+
+    .dashboard-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 30px;
+      flex-wrap: wrap;
+    }
+
+    .profile-section {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .profile-img {
+      width: 80px;
+      height: 80px;
+      object-fit: cover;
+      border-radius: 50%;
+      border: 4px solid #6c63ff;
+    }
+
+    .room-card {
+      background: rgba(255,255,255,0.95);
+      backdrop-filter: blur(6px);
+      padding: 20px;
+      border-radius: 16px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+      margin-bottom: 20px;
+      transition: transform 0.2s ease;
+    }
+
+    .room-card:hover {
+      transform: translateY(-5px);
+    }
+
+    .tenant-list li {
+      background-color: #f2f4ff;
+      padding: 8px 12px;
+      border-radius: 8px;
+      margin-bottom: 6px;
+      list-style: none;
+    }
+
+    .btn-theme {
+      background-color: #6c63ff;
+      color: white;
+    }
+
+    .btn-theme:hover {
+      background-color: #574fd6;
+    }
+
+    html[data-bs-theme="dark"] .sidebar {
+      background-color: #1e1e2e;
+    }
+
+    html[data-bs-theme="dark"] .sidebar a {
+      color: #ccc;
+    }
+
+    html[data-bs-theme="dark"] .sidebar a.active,
+    html[data-bs-theme="dark"] .sidebar a:hover {
+      background: #2a2a3d;
+      color: #9f96ff;
+    }
+
+    html[data-bs-theme="dark"] .room-card {
+      background-color: #2a2a3d;
+    }
+
+    html[data-bs-theme="dark"] .tenant-list li {
+      background-color: #3a3a5d;
+    }
+
+    html[data-bs-theme="dark"] .btn-theme {
+      background-color: #9f96ff;
+    }
+
+    @media (max-width: 768px) {
+      .main-content {
+        margin-left: 0;
+        padding: 20px;
+      }
+      .sidebar-toggle-btn {
+        left: 20px !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Sidebar -->
+<nav class="sidebar closed">
+  <div class="brand"><i class="fas fa-house-user"></i><span>BoardingHub</span></div>
+  <a href="#" class="active"><i class="fas fa-home"></i> Dashboard</a>
+  <a href="{% url 'room_list' %}"><i class="fas fa-door-closed"></i> Rooms</a>
+  <a href="{% url 'tenant_list' %}"><i class="fas fa-users"></i> Tenants</a>
+  <a href="{% url 'edit_profile' %}"><i class="fas fa-user-cog"></i> Profile</a>
+  <form method="post" action="{% url 'logout' %}" class="mt-4">
+    {% csrf_token %}
+    <button class="btn btn-danger w-100"><i class="fas fa-sign-out-alt"></i> Logout</button>
+  </form>
+  <button class="darkmode-toggle">🌓 Toggle Dark Mode</button>
+</nav>
+
+<!-- Toggle Button -->
+<button class="sidebar-toggle-btn" aria-label="Toggle sidebar"><i class="fas fa-bars"></i></button>
+
+<!-- Main Content -->
+<main class="main-content">
+  {# {% include "core/header.html" %} #}
+  <div class="dashboard-header">
+    <div class="profile-section">
+      {% if request.user.houseowner.profile_image %}
+      <img src="{{ request.user.houseowner.profile_image.url }}" class="profile-img" alt="Profile Picture" />
+      {% endif %}
+      <div>
+        <h4 class="mb-1">Hello, {{ request.user.username }} 👋</h4>
+        <p class="mb-0">Welcome to <strong>{{ owner.boarding_house_name }} 🏡</strong></p>
+      </div>
+    </div>
+  </div>
+
+  <h5 class="mb-4 text-primary fw-semibold">Your Rooms 🛌</h5>
+
+  {% if rooms %}
+  <div class="row">
+    {% for room in rooms %}
+    <div class="col-md-6">
+      <div class="room-card">
+        <h5>Room Number: {{ room.room_number }}</h5>
+        <p>Capacity: {{ room.capacity }}</p>
+        <strong>Tenants:</strong>
+        {% if room.tenant_set.all %}
+        <ul class="tenant-list ps-3 mt-2">
+          {% for tenant in room.tenant_set.all %}
+  <li>
+    <a href="{% url 'tenant_detail' tenant.id %}">
+      {{ tenant.full_name }}{% if tenant.status %} - {{ tenant.status|capfirst }}{% endif %}
+    </a>
+  </li>
+{% endfor %} 
+        </ul>
+        {% else %}
+        <p class="text-muted">No tenants assigned yet.</p>
+        {% endif %}
+        <div class="mt-3">
+          <a href="{% url 'edit_room' room.id %}" class="btn btn-sm btn-outline-primary">Edit</a>
+          <a href="{% url 'delete_room' room.id %}" class="btn btn-sm btn-outline-danger">Delete</a>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="alert alert-warning mt-4">You don't have any rooms yet.</div>
+  {% endif %}
+
+  <div class="mt-4 d-flex gap-2">
+    <a href="{% url 'add_room' %}" class="btn btn-theme">+ Add New Room</a>
+    <a href="{% url 'add_tenant' %}" class="btn btn-theme">+ Add New Tenant</a>
+  </div>
+</main>
+
+<script>
+  const sidebar = document.querySelector(".sidebar");
+  const toggleBtn = document.querySelector(".sidebar-toggle-btn");
+  const themeToggle = document.querySelector(".darkmode-toggle");
+  const html = document.documentElement;
+
+  // Toggle Sidebar
+  toggleBtn.addEventListener("click", () => {
+    sidebar.classList.toggle("closed");
+    toggleBtn.style.left = sidebar.classList.contains("closed") ? "20px" : "270px";
+  });
+
+  // Theme Toggle
+  function toggleTheme() {
+    const currentTheme = html.getAttribute("data-bs-theme");
+    const newTheme = currentTheme === "dark" ? "light" : "dark";
+    html.setAttribute("data-bs-theme", newTheme);
+    localStorage.setItem("theme", newTheme);
+  }
+
+  themeToggle.addEventListener("click", toggleTheme);
+
+  // Load theme preference
+  document.addEventListener("DOMContentLoaded", () => {
+    const savedTheme = localStorage.getItem("theme") || "light";
+    html.setAttribute("data-bs-theme", savedTheme);
+  });
+</script>
+{# {% include "core/footer.html" %} #}
+</body>
+</html>

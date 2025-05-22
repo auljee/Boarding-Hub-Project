@@ -1,0 +1,227 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <title>Tenant List - BoardingHub</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <!-- Bootstrap & Font Awesome -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" defer></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      margin: 0;
+      min-height: 100vh;
+      transition: background 0.4s ease;
+    }
+
+    html[data-bs-theme="light"] body {
+      background: linear-gradient(120deg, #f6d365, #fda085, #fbc2eb, #a6c1ee);
+      background-size: 400% 400%;
+      animation: gradient 20s ease infinite;
+    }
+
+    @keyframes gradient {
+      0%, 100% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+    }
+
+    html[data-bs-theme="dark"] body {
+      background: #121212;
+      color: #f1f1f1;
+    }
+
+    .wrapper { display: flex; }
+
+    .sidebar {
+      width: 250px;
+      background-color: rgba(255,255,255,0.95);
+      backdrop-filter: blur(8px);
+      box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+      padding: 30px 20px;
+      position: fixed;
+      height: 100vh;
+      z-index: 1000;
+      transition: transform 0.3s ease;
+      top: 0;
+      left: 0;
+    }
+
+    .sidebar.closed { transform: translateX(-100%); }
+
+    .sidebar .brand {
+      font-size: 1.55rem;
+      font-weight: 700;
+      color: #6c63ff;
+      margin-bottom: 40px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .sidebar a {
+      display: block;
+      color: #333;
+      text-decoration: none;
+      padding: 10px 12px;
+      margin-bottom: 10px;
+      border-radius: 10px;
+      font-weight: 500;
+      transition: all 0.2s ease;
+    }
+
+    .sidebar a.active,
+    .sidebar a:hover {
+      background: #e4e8ff;
+      color: #6c63ff;
+    }
+
+    .darkmode-toggle {
+      margin-top: 20px;
+      background: #6c63ff;
+      color: white;
+      border: none;
+      padding: 10px;
+      width: 100%;
+      border-radius: 8px;
+    }
+
+    .main-content {
+      margin-left: 250px;
+      padding: 40px 30px;
+      transition: margin-left 0.3s ease;
+    }
+
+    .sidebar.closed ~ .main-content { margin-left: 0; }
+
+    .sidebar-toggle-btn {
+      position: fixed;
+      top: 20px;
+      left: 270px;
+      z-index: 1100;
+      background-color: #6c63ff;
+      color: white;
+      border: none;
+      padding: 10px 12px;
+      border-radius: 50%;
+      font-size: 1.2rem;
+    }
+
+    .sidebar.closed + .sidebar-toggle-btn {
+      left: 20px;
+    }
+
+    .tenant-card {
+      background-color: rgba(255,255,255,0.95);
+      backdrop-filter: blur(6px);
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+    }
+
+    .btn-theme {
+      background-color: #6c63ff;
+      color: white;
+    }
+
+    .btn-theme:hover {
+      background-color: #574fd6;
+    }
+
+    html[data-bs-theme="dark"] .sidebar { background-color: #1e1e2e; }
+    html[data-bs-theme="dark"] .sidebar a { color: #ccc; }
+    html[data-bs-theme="dark"] .sidebar a.active,
+    html[data-bs-theme="dark"] .sidebar a:hover {
+      background: #2a2a3d;
+      color: #9f96ff;
+    }
+    html[data-bs-theme="dark"] .tenant-card { background-color: #2a2a3d; }
+
+    @media (max-width: 768px) {
+      .main-content { margin-left: 0; padding: 20px; }
+      .sidebar-toggle-btn { left: 20px !important; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Sidebar -->
+<nav class="sidebar closed">
+  <div class="brand"><i class="fas fa-house-user"></i><span>BoardingHub</span></div>
+  <a href="{% url 'dashboard' %}"><i class="fas fa-home"></i> Dashboard</a>
+  <a href="{% url 'room_list' %}"><i class="fas fa-door-closed"></i> Rooms</a>
+  <a href="{% url 'tenant_list' %}" class="active"><i class="fas fa-users"></i> Tenants</a>
+  <a href="{% url 'edit_profile' %}"><i class="fas fa-user-cog"></i> Profile</a>
+  <form method="post" action="{% url 'logout' %}" class="mt-4">
+    {% csrf_token %}
+    <button class="btn btn-danger w-100"><i class="fas fa-sign-out-alt"></i> Logout</button>
+  </form>
+  <button class="darkmode-toggle">🌓 Toggle Dark Mode</button>
+</nav>
+
+<!-- Toggle Button -->
+<button class="sidebar-toggle-btn"><i class="fas fa-bars"></i></button>
+
+<!-- Main Content -->
+<main class="main-content">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h4 class="text-primary fw-bold ms-5">Tenant List</h4>
+    <a href="{% url 'add_tenant' %}" class="btn btn-theme">+ Add Tenant</a>
+  </div>
+
+  {% if tenants %}
+    <div class="row">
+      {% for tenant in tenants %}
+        <div class="col-md-6">
+          <div class="tenant-card">
+            <h5>{{ tenant.full_name }}</h5>
+            <p><strong>Room:</strong> {{ tenant.room.room_number }}</p>
+            <p><strong>Email:</strong> {{ tenant.email }}</p>
+            <div class="mt-2 d-flex gap-2">
+              <a href="{% url 'tenant_detail' tenant.id %}" class="btn btn-sm btn-outline-info">View</a>
+              <a href="{% url 'tenant_edit' tenant.id %}" class="btn btn-sm btn-outline-primary">Edit</a>
+              <a href="{% url 'delete_tenant' tenant.id %}" class="btn btn-sm btn-outline-danger">Delete</a>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="alert alert-info">No tenants found.</div>
+  {% endif %}
+</main>
+
+<script>
+  const sidebar = document.querySelector(".sidebar");
+  const toggleBtn = document.querySelector(".sidebar-toggle-btn");
+  const themeToggle = document.querySelector(".darkmode-toggle");
+  const html = document.documentElement;
+
+  toggleBtn.addEventListener("click", () => {
+    sidebar.classList.toggle("closed");
+    toggleBtn.style.left = sidebar.classList.contains("closed") ? "20px" : "270px";
+  });
+
+  themeToggle.addEventListener("click", () => {
+    const currentTheme = html.getAttribute("data-bs-theme");
+    const newTheme = currentTheme === "dark" ? "light" : "dark";
+    html.setAttribute("data-bs-theme", newTheme);
+    localStorage.setItem("theme", newTheme);
+  });
+
+  document.addEventListener("DOMContentLoaded", () => {
+    const savedTheme = localStorage.getItem("theme") || "light";
+    html.setAttribute("data-bs-theme", savedTheme);
+  });
+</script>
+
+</body>
+</html>

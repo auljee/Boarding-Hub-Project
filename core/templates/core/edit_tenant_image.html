@@ -1,0 +1,71 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Edit Image for {{ tenant.full_name }}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #5D4A66, #40E0D0);
+            color: #333;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            max-width: 400px;
+            width: 100%;
+            text-align: center;
+        }
+        h2 {
+            color: #5D4A66;
+            margin-bottom: 30px;
+        }
+        .current-image {
+            margin-bottom: 20px;
+            border-radius: 50%;
+            width: 150px;
+            height: 150px;
+            object-fit: cover;
+            border: 3px solid #673F69;
+        }
+        button.btn-primary {
+            background-color: #673F69;
+            border: none;
+            border-radius: 12px;
+            padding: 10px 20px;
+            font-weight: 600;
+        }
+        button.btn-primary:hover {
+            background-color: #5D4A66;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Edit Image for {{ tenant.full_name }}</h2>
+
+        {% if tenant.tenant_image %}
+            <img src="{{ tenant.tenant_image.url }}" alt="Current Image" class="current-image">
+        {% else %}
+            <p>No image uploaded yet.</p>
+        {% endif %}
+
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="btn btn-primary">Update</button>
+        </form>
+
+        <a href="{% url 'tenant_detail' tenant.id %}" class="btn btn-secondary mt-3">← Back to Tenant Details</a>
+    </div>
+</body>
+</html>

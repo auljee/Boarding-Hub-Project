@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f9f0ff;
+            padding: 20px;
+            color: #2c2c54;
+        }
+
+        .header {
+            background-color: #8e44ad;
+            padding: 15px;
+            text-align: center;
+            color: white;
+            font-size: 20px;
+            font-weight: bold;
+            border-radius: 10px;
+        }
+
+        .subheader {
+            text-align: center;
+            font-size: 18px;
+            color: #6c3483;
+            margin-bottom: 30px;
+        }
+
+        h3 {
+            color: #2c2c54;
+            margin-bottom: 10px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+        }
+
+        th, td {
+            border: 1px solid #dcd6f7;
+            padding: 10px;
+            vertical-align: top;
+        }
+
+        th {
+            background-color: #e4ccf5;
+            color: #4a235a;
+            text-align: left;
+        }
+
+        .section-title {
+            font-weight: bold;
+            color: #2c2c54;
+            margin-top: 30px;
+        }
+
+        .paid {
+            background-color: #d5f5e3;
+        }
+
+        .unpaid {
+            background-color: #fdecea;
+        }
+
+        .notes {
+            font-style: italic;
+            color: #5e548e;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">📄 This is a copy of your payment history from {{ tenant.room.owner.boarding_house_name }}</div>
+    <div class="subheader">🏠 Boarding Hub – Payment History Copy</div>
+
+    <h3>■ Tenant Information</h3>
+    <table>
+        <tr><th>Full Name</th><td>{{ tenant.full_name }}</td></tr>
+        <tr><th>Email</th><td>{{ tenant.email }}</td></tr>
+        <tr><th>Contact Number</th><td>{{ tenant.contact_number }}</td></tr>
+        <tr><th>Address</th><td>{{ tenant.address }}</td></tr>
+        <tr><th>Guardian Name</th><td>{{ tenant.guardian_name }}</td></tr>
+        <tr><th>Guardian Contact</th><td>{{ tenant.guardian_contact }}</td></tr>
+        <tr><th>Guardian Address</th><td>{{ tenant.guardian_address }}</td></tr>
+    </table>
+
+    <h3>■ Transaction History</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Month</th>
+                <th>Amount</th>
+                <th>Date Paid</th>
+                <th>Status</th>
+                <th>Notes</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for payment in payments %}
+            <tr class="{% if payment.status == 'paid' %}paid{% else %}unpaid{% endif %}">
+                <td>{{ payment.month }}</td>
+                <td>P {{ payment.amount }}</td>
+                <td>{{ payment.date_paid }}</td>
+                <td>{{ payment.status|title }}</td>
+                <td class="notes">
+                    {% if payment.notes %}
+                        {{ payment.notes|linebreaksbr }}
+                    {% else %}
+                        <i>No notes</i>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    
+    <p style="text-align:center; font-size: 10px;">&copy; {{ current_year }} Boarding Hub. All rights reserved.</p>
+
+</body>
+</html>
+
+

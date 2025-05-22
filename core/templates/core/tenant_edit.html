@@ -1,0 +1,40 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <h2 class="text-success mb-4 text-center">✏️ Edit Tenant</h2>
+
+        <div class="card shadow p-4 border-0">
+            <form method="POST">
+                {% csrf_token %}
+                {% for field in form %}
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">{{ field.label_tag }}</label>
+                        {{ field }}
+                        {% if field.errors %}
+                            <div class="form-text text-danger">{{ field.errors }}</div>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+                <div class="text-end">
+                    <button type="submit" class="btn btn-success px-4">
+                        💾 Save Changes
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+    select.status-select option[value="active"] {
+        color: green;
+        font-weight: bold;
+    }
+    select.status-select option[value="inactive"] {
+        color: red;
+        font-weight: bold;
+    }
+</style>
+{% endblock %}
